@@ -11,9 +11,15 @@ export type ViewSize = {
 
 type Props = {
   videoSources: VideoSource[];
+  onRefresh: () => void;
+  refreshing: boolean;
 };
 
-export default function VideoFlatListScreen({ videoSources }: Props) {
+export default function VideoFlatListScreen({
+  videoSources,
+  onRefresh,
+  refreshing,
+}: Props) {
   const [viewSize, setViewSize] = useState<ViewSize | null>(null);
   const [visibleIndex, setVisibleIndex] = useState(0);
 
@@ -27,6 +33,8 @@ export default function VideoFlatListScreen({ videoSources }: Props) {
       {viewSize && (
         <FlashList
           data={videoSources}
+          onRefresh={onRefresh}
+          refreshing={refreshing}
           snapToInterval={viewSize.height}
           snapToAlignment="center"
           disableIntervalMomentum
