@@ -1,7 +1,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { VideoSource } from "expo-video";
 import { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { RefreshControl, StyleSheet, View } from "react-native";
 import ListItem from "./ListItem";
 
 export type ViewSize = {
@@ -33,8 +33,14 @@ export default function VideoFlatListScreen({
       {viewSize && (
         <FlashList
           data={videoSources}
-          onRefresh={onRefresh}
-          refreshing={refreshing}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#ffffff"
+              progressViewOffset={100}
+            />
+          }
           snapToInterval={viewSize.height}
           snapToAlignment="center"
           disableIntervalMomentum
@@ -72,6 +78,5 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     alignSelf: "stretch",
-    backgroundColor: "black",
   },
 });

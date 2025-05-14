@@ -1,37 +1,26 @@
 import List from "@/components/List";
-import convertVideoToVideoSource from "@/tools/convertVideoToVideoSource";
-import fetchVideos from "@/tools/fetchVideos";
-import { VideoSource } from "expo-video";
-import { useEffect, useState } from "react";
+import useVideosData from "@/hooks/useVideosData";
+import { getCurrentVideoCacheSize } from "expo-video";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 
 export default function Index() {
-  const [videoSources, setVideoSources] = useState<VideoSource[] | undefined>(
-    undefined,
-  );
-  const [refreshing, setRefreshing] = useState(false);
-
-  const fetchData = () => {
-    setRefreshing(true);
-
-    fetchVideos({ hostUrl: "http://192.168.124.37:3000" })
-      .then((videos) => videos.map((video) => convertVideoToVideoSource(video)))
-      .then((videoSources) => {
-        setVideoSources(videoSources);
-      })
-      .finally(() => {
-        setRefreshing(false);
-      });
-  };
-
-  const onRefresh = () => {
-    setVideoSources(undefined);
-    fetchData();
-  };
+  const { videoSources, refreshing, fetchData, onRefresh } = useVideosData();
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const cacheSize = getCurrentVideoCacheSize();
+      console.log(
+        `Current cache size: ${Math.round(cacheSize / 1_000_0) / 100}MB`,
+      );
+    }, 2000);
+
+    return () => clearInterval(interval);
+  });
 
   return (
     <View style={styles.container}>
@@ -47,5 +36,6 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#000000",
   },
 });

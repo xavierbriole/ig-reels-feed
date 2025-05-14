@@ -28,11 +28,12 @@ app.get("/videos", (req, res) => {
 app.get("/video/:name", (req, res) => {
   const videoPath = path.join(videoDirectory, req.params.name);
 
-  const fs = require("fs");
   fs.access(videoPath, fs.constants.F_OK, (err) => {
     if (err) {
       return res.status(404).send("Vidéo non trouvée.");
     }
+
+    res.setHeader("Content-Type", "video/mp4");
 
     res.sendFile(videoPath);
   });
